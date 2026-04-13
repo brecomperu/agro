@@ -1,0 +1,1366 @@
+<!doctype html>
+<html lang="en" class="h-full">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PeruAgro Export — B2B Agricultural Trade</title>
+    <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+    <script src="https://cdn.jsdelivr.net/npm/lucide@0.263.0/dist/umd/lucide.min.js"></script>
+    <script src="/_sdk/element_sdk.js"></script>
+    <link
+        href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,500;0,9..40,700;1,9..40,400&amp;family=Playfair+Display:wght@600;700;800&amp;display=swap"
+        rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        terra: { 50: '#fdf8f0', 100: '#f9eddb', 200: '#f2d8b0', 300: '#e8bc7a', 400: '#dc9a45', 500: '#c77f2a', 600: '#a8631f', 700: '#86491a', 800: '#6b3a19', 900: '#3d2110' },
+                        forest: { 50: '#f0f7f1', 100: '#d9ebdb', 200: '#b5d8ba', 300: '#84bd8c', 400: '#55a05f', 500: '#2d7a3a', 600: '#1f6129', 700: '#1a4e22', 800: '#153e1c', 900: '#0d2a13' },
+                        slate2: { 50: '#f8f9fa', 100: '#f1f3f5', 200: '#e9ecef', 300: '#dee2e6', 400: '#adb5bd', 500: '#6c757d', 600: '#495057', 700: '#343a40', 800: '#212529', 900: '#0d1117' }
+                    },
+                    fontFamily: {
+                        display: ['Playfair Display', 'Georgia', 'serif'],
+                        body: ['DM Sans', 'system-ui', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        html,
+        body {
+            height: 100%;
+            margin: 0;
+            font-family: 'DM Sans', system-ui, sans-serif;
+            scroll-behavior: smooth
+        }
+
+        * {
+            box-sizing: border-box
+        }
+
+        :root {
+            --c-bg: #f8f9fa;
+            --c-surface: #ffffff;
+            --c-text: #212529;
+            --c-primary: #2d7a3a;
+            --c-accent: #c77f2a
+        }
+
+        /* Page transitions */
+        .page {
+            display: none;
+            animation: fadeUp .35s ease
+        }
+
+        .page.active {
+            display: block
+        }
+
+        @keyframes fadeUp {
+            from {
+                opacity: 0;
+                transform: translateY(12px)
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0)
+            }
+        }
+
+        /* Subtle hover lift */
+        .card-lift {
+            transition: transform .25s ease, box-shadow .25s ease
+        }
+
+        .card-lift:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 32px rgba(0, 0, 0, .1)
+        }
+
+        /* Timeline connector */
+        .timeline-dot {
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            border: 3px solid var(--c-primary);
+            background: #fff;
+            position: relative;
+            z-index: 2
+        }
+
+        .timeline-dot.filled {
+            background: var(--c-primary)
+        }
+
+        .timeline-line {
+            position: absolute;
+            left: 6px;
+            top: 14px;
+            width: 2px;
+            height: calc(100% - 14px);
+            background: #dee2e6
+        }
+
+        .timeline-line.done {
+            background: var(--c-primary)
+        }
+
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #adb5bd;
+            border-radius: 3px
+        }
+
+        /* Toast */
+        .toast {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            z-index: 9999;
+            padding: 14px 24px;
+            border-radius: 10px;
+            color: #fff;
+            font-weight: 500;
+            transform: translateY(80px);
+            opacity: 0;
+            transition: all .35s ease;
+            pointer-events: none
+        }
+
+        .toast.show {
+            transform: translateY(0);
+            opacity: 1;
+            pointer-events: auto
+        }
+
+        /* Nav active */
+        .nav-link.active-link {
+            color: var(--c-primary) !important;
+            font-weight: 700
+        }
+
+        /* Gradient text */
+        .grad-text {
+            background: linear-gradient(135deg, #2d7a3a, #c77f2a);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text
+        }
+
+        /* Checkbox custom */
+        .chk:checked {
+            background: var(--c-primary);
+            border-color: var(--c-primary)
+        }
+
+        /* Range */
+        input[type=range] {
+            -webkit-appearance: none;
+            height: 6px;
+            border-radius: 3px;
+            background: #dee2e6;
+            outline: none
+        }
+
+        input[type=range]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: var(--c-primary);
+            cursor: pointer
+        }
+    </style>
+    <style>
+        body {
+            box-sizing: border-box;
+        }
+    </style>
+    <script src="/_sdk/data_sdk.js" type="text/javascript"></script>
+</head>
+
+<body class="h-full bg-slate2-50 text-slate2-800 overflow-auto"><!-- ========== TOAST ========== -->
+    <div id="toast" class="toast bg-forest-600"></div><!-- ========== MOBILE NAV OVERLAY ========== -->
+    <div id="mobileNav" class="fixed inset-0 bg-black/60 z-50 hidden" onclick="closeMobileNav()">
+        <div class="bg-white w-72 h-full p-6 flex flex-col gap-4" onclick="event.stopPropagation()">
+            <div class="flex justify-between items-center mb-4"><span
+                    class="font-display text-xl font-bold text-forest-700" id="mobBrand">PeruAgro</span> <button
+                    onclick="closeMobileNav()" aria-label="Close menu"><i data-lucide="x" class="w-6 h-6"></i></button>
+            </div><a class="nav-link py-2 text-lg font-medium text-slate2-700 hover:text-forest-600 cursor-pointer"
+                onclick="go('landing');closeMobileNav()">Home</a> <a
+                class="nav-link py-2 text-lg font-medium text-slate2-700 hover:text-forest-600 cursor-pointer"
+                onclick="go('catalog');closeMobileNav()">Catalog</a> <a
+                class="nav-link py-2 text-lg font-medium text-slate2-700 hover:text-forest-600 cursor-pointer"
+                onclick="go('dashboard');closeMobileNav()">Dashboard</a> <a
+                class="nav-link py-2 text-lg font-medium text-slate2-700 hover:text-forest-600 cursor-pointer"
+                onclick="go('documents');closeMobileNav()">Documents</a> <a
+                class="nav-link py-2 text-lg font-medium text-slate2-700 hover:text-forest-600 cursor-pointer"
+                onclick="go('tracking');closeMobileNav()">Tracking</a>
+            <div class="mt-auto flex gap-2"><button onclick="go('login');closeMobileNav()"
+                    class="flex-1 py-2 border-2 border-forest-600 text-forest-600 rounded-lg font-medium hover:bg-forest-50">Login</button>
+                <button onclick="go('register');closeMobileNav()"
+                    class="flex-1 py-2 bg-forest-600 text-white rounded-lg font-medium hover:bg-forest-700">Register</button>
+            </div>
+        </div>
+    </div><!-- ========== HEADER ========== -->
+        <!-- TOP HEADER -->
+    <div class="top-bar">
+        <div class="top-bar-inner">
+            <div class="top-bar-left">
+                <div class="icon-circle">📞</div>
+                <p>(051) 496 6384<br>RPM: #976-765606 / RPC: 980-967317</p>
+            </div>
+            
+            <div class="logo-center">
+                <svg width="180" height="90" viewBox="0 0 180 90" xmlns="http://www.w3.org/2000/svg">
+                    <circle cx="90" cy="45" r="35" fill="none" stroke="#FDCB29" stroke-width="8" stroke-dasharray="10 5" />
+                    <text x="90" y="52" font-family="Arial" font-weight="bold" font-size="28" fill="#5AA436" text-anchor="middle">Andina</text>
+                    <text x="90" y="65" font-family="Arial" font-size="10" fill="#206229" text-anchor="middle">Corporation Of Consultants</text>
+                </svg>
+            </div>
+
+            <div class="top-bar-right">
+                <div class="icon-circle">📍</div>
+                <p>Psj. Olaya 110 Ofc. 601<br>Plaza Mayor Cercado de Lima - Lima</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- NAV BAR AMARILLA -->
+    <nav class="nav-bar">
+        <ul class="nav-menu">
+            <li><a href="index.html">INICIO</a></li>
+            <li><a href="nosotros.html">EMPRESA</a></li>
+            <li><a href="servicios.html">SERVICIO ⌄</a></li>
+            <li><a href="productos.html">PRODUCTOS</a></li>
+            <li><a href="proyectos.html">PROYECTOS</a></li>
+            <li><a href="contacto.html">CONTACTO</a></li>
+            <li class="active"><a href="andinacorp-ecommerce.html">ECOMMERCE</a></li>
+            <li><a href="#" style="padding: 15px 15px;">🔍</a></li>
+        </ul>
+    </nav><!-- ========== MAIN CONTENT ========== -->
+    <main id="app" class="w-full" style="min-height:calc(100% - 64px)"><!-- ===== LANDING PAGE ===== -->
+        <section id="page-landing" class="page active"><!-- Hero -->
+            <div class="relative overflow-hidden bg-gradient-to-br from-forest-900 via-forest-800 to-forest-700">
+                <div class="absolute inset-0 opacity-10">
+                    <svg width="100%" height="100%">
+                        <defs>
+                            <pattern id="grid" width="40" height="40" patternunits="userSpaceOnUse">
+                                <path d="M 40 0 L 0 0 0 40" fill="none" stroke="white" stroke-width="0.5" />
+                            </pattern>
+                        </defs>
+                        <rect width="100%" height="100%" fill="url(#grid)" />
+                    </svg>
+                </div>
+                <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 sm:py-28 lg:py-36">
+                    <div class="max-w-3xl">
+                        <div
+                            class="inline-flex items-center gap-2 px-4 py-2 bg-white/10 backdrop-blur rounded-full text-terra-300 text-sm font-medium mb-6">
+                            <i data-lucide="globe" class="w-4 h-4"></i> Exporting to 45+ countries worldwide
+                        </div>
+                        <h1 id="heroTitle"
+                            class="font-display text-4xl sm:text-5xl lg:text-6xl font-extrabold text-white leading-tight mb-6">
+                            Premium Agricultural<br>
+                            Exports from <span class="text-terra-400">Peru</span></h1>
+                        <p id="heroSub" class="text-lg sm:text-xl text-forest-100/80 mb-10 max-w-xl leading-relaxed">
+                            Source the finest fruits, cacao, textiles &amp; artisan goods directly from certified
+                            Peruvian producers. B2B wholesale with full logistics.</p>
+                        <div class="flex flex-col sm:flex-row gap-4"><button onclick="go('catalog')"
+                                class="px-8 py-4 bg-terra-500 hover:bg-terra-600 text-white font-bold rounded-xl transition-colors text-lg"
+                                id="ctaQuoteBtn">Request a Quote</button> <button onclick="go('catalog')"
+                                class="px-8 py-4 bg-white/10 hover:bg-white/20 backdrop-blur text-white font-bold rounded-xl transition-colors text-lg border border-white/20"
+                                id="ctaWholesaleBtn">Buy Wholesale</button>
+                        </div>
+                        <div class="flex items-center gap-6 mt-10 text-forest-200/70 text-sm"><span
+                                class="flex items-center gap-2"><i data-lucide="shield-check"
+                                    class="w-4 h-4 text-terra-400"></i> Certified Quality</span> <span
+                                class="flex items-center gap-2"><i data-lucide="truck"
+                                    class="w-4 h-4 text-terra-400"></i> Global Shipping</span> <span
+                                class="flex items-center gap-2"><i data-lucide="award"
+                                    class="w-4 h-4 text-terra-400"></i> Fair Trade</span>
+                        </div>
+                    </div>
+                </div>
+            </div><!-- Stats -->
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 -mt-8 relative z-10">
+                <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+                    <div class="bg-white rounded-2xl p-6 shadow-lg shadow-slate2-200/50 text-center">
+                        <span class="text-3xl font-bold text-forest-700">2.5K+</span>
+                        <p class="text-sm text-slate2-500 mt-1">Active Buyers</p>
+                    </div>
+                    <div class="bg-white rounded-2xl p-6 shadow-lg shadow-slate2-200/50 text-center">
+                        <span class="text-3xl font-bold text-terra-600">45+</span>
+                        <p class="text-sm text-slate2-500 mt-1">Countries</p>
+                    </div>
+                    <div class="bg-white rounded-2xl p-6 shadow-lg shadow-slate2-200/50 text-center">
+                        <span class="text-3xl font-bold text-forest-700">150+</span>
+                        <p class="text-sm text-slate2-500 mt-1">Certified Producers</p>
+                    </div>
+                    <div class="bg-white rounded-2xl p-6 shadow-lg shadow-slate2-200/50 text-center">
+                        <span class="text-3xl font-bold text-terra-600">98%</span>
+                        <p class="text-sm text-slate2-500 mt-1">On-Time Delivery</p>
+                    </div>
+                </div>
+            </div><!-- Categories -->
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
+                <div class="text-center mb-12">
+                    <h2 class="font-display text-3xl sm:text-4xl font-bold text-slate2-900 mb-3">Product Categories</h2>
+                    <p class="text-slate2-500 max-w-lg mx-auto">Explore our curated selection of premium Peruvian goods
+                        ready for international export.</p>
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                    <div class="card-lift bg-white rounded-2xl overflow-hidden cursor-pointer border border-slate2-100"
+                        onclick="filterCatalog('fruits')">
+                        <div
+                            class="h-48 bg-gradient-to-br from-green-400 to-emerald-600 flex items-center justify-center text-6xl">
+                            🥑
+                        </div>
+                        <div class="p-5">
+                            <h3 class="font-display text-xl font-bold text-slate2-800">Fruits</h3>
+                            <p class="text-sm text-slate2-500 mt-1">Avocado, mango, blueberries, grapes &amp; more</p>
+                            <span
+                                class="inline-flex items-center gap-1 text-forest-600 text-sm font-medium mt-3">Explore
+                                <i data-lucide="arrow-right" class="w-4 h-4"></i></span>
+                        </div>
+                    </div>
+                    <div class="card-lift bg-white rounded-2xl overflow-hidden cursor-pointer border border-slate2-100"
+                        onclick="filterCatalog('cacao')">
+                        <div
+                            class="h-48 bg-gradient-to-br from-amber-700 to-yellow-900 flex items-center justify-center text-6xl">
+                            🍫
+                        </div>
+                        <div class="p-5">
+                            <h3 class="font-display text-xl font-bold text-slate2-800">Cacao &amp; Chocolate</h3>
+                            <p class="text-sm text-slate2-500 mt-1">Single-origin cacao beans &amp; artisan chocolate
+                            </p><span
+                                class="inline-flex items-center gap-1 text-forest-600 text-sm font-medium mt-3">Explore
+                                <i data-lucide="arrow-right" class="w-4 h-4"></i></span>
+                        </div>
+                    </div>
+                    <div class="card-lift bg-white rounded-2xl overflow-hidden cursor-pointer border border-slate2-100"
+                        onclick="filterCatalog('textiles')">
+                        <div
+                            class="h-48 bg-gradient-to-br from-rose-400 to-purple-600 flex items-center justify-center text-6xl">
+                            🧶
+                        </div>
+                        <div class="p-5">
+                            <h3 class="font-display text-xl font-bold text-slate2-800">Textiles</h3>
+                            <p class="text-sm text-slate2-500 mt-1">Alpaca wool, Pima cotton &amp; handwoven fabrics</p>
+                            <span
+                                class="inline-flex items-center gap-1 text-forest-600 text-sm font-medium mt-3">Explore
+                                <i data-lucide="arrow-right" class="w-4 h-4"></i></span>
+                        </div>
+                    </div>
+                    <div class="card-lift bg-white rounded-2xl overflow-hidden cursor-pointer border border-slate2-100"
+                        onclick="filterCatalog('artisan')">
+                        <div
+                            class="h-48 bg-gradient-to-br from-terra-400 to-terra-700 flex items-center justify-center text-6xl">
+                            🏺
+                        </div>
+                        <div class="p-5">
+                            <h3 class="font-display text-xl font-bold text-slate2-800">Artisanal Goods</h3>
+                            <p class="text-sm text-slate2-500 mt-1">Ceramics, jewelry &amp; traditional crafts</p><span
+                                class="inline-flex items-center gap-1 text-forest-600 text-sm font-medium mt-3">Explore
+                                <i data-lucide="arrow-right" class="w-4 h-4"></i></span>
+                        </div>
+                    </div>
+                </div>
+            </div><!-- Trust -->
+            <div class="bg-white border-y border-slate2-100">
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
+                    <div class="text-center mb-12">
+                        <h2 class="font-display text-3xl sm:text-4xl font-bold text-slate2-900 mb-3">Why Trade With Us
+                        </h2>
+                        <p class="text-slate2-500 max-w-lg mx-auto">End-to-end support from sourcing to delivery at your
+                            port.</p>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                        <div class="text-center p-6">
+                            <div
+                                class="w-16 h-16 rounded-2xl bg-forest-50 flex items-center justify-center mx-auto mb-4">
+                                <i data-lucide="shield-check" class="w-8 h-8 text-forest-600"></i>
+                            </div>
+                            <h3 class="font-display text-lg font-bold mb-2">Certified Quality</h3>
+                            <p class="text-sm text-slate2-500">HACCP, BRC, GLOBALG.A.P., Fair Trade &amp; organic
+                                certifications across our producer network.</p>
+                        </div>
+                        <div class="text-center p-6">
+                            <div
+                                class="w-16 h-16 rounded-2xl bg-terra-50 flex items-center justify-center mx-auto mb-4">
+                                <i data-lucide="ship" class="w-8 h-8 text-terra-600"></i>
+                            </div>
+                            <h3 class="font-display text-lg font-bold mb-2">Global Logistics</h3>
+                            <p class="text-sm text-slate2-500">Integrated maritime, air &amp; multimodal shipping from
+                                Callao and Paita ports to any destination.</p>
+                        </div>
+                        <div class="text-center p-6">
+                            <div
+                                class="w-16 h-16 rounded-2xl bg-forest-50 flex items-center justify-center mx-auto mb-4">
+                                <i data-lucide="handshake" class="w-8 h-8 text-forest-600"></i>
+                            </div>
+                            <h3 class="font-display text-lg font-bold mb-2">Dedicated Support</h3>
+                            <p class="text-sm text-slate2-500">Bilingual trade specialists, documentation handling &amp;
+                                customs clearance assistance.</p>
+                        </div>
+                    </div>
+                </div>
+            </div><!-- CTA -->
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
+                <div
+                    class="bg-gradient-to-br from-forest-800 to-forest-900 rounded-3xl p-10 sm:p-16 text-center relative overflow-hidden">
+                    <div class="absolute inset-0 opacity-5">
+                        <svg width="100%" height="100%">
+                            <defs>
+                                <pattern id="dots" width="20" height="20" patternunits="userSpaceOnUse">
+                                    <circle cx="10" cy="10" r="1.5" fill="white" />
+                                </pattern>
+                            </defs>
+                            <rect width="100%" height="100%" fill="url(#dots)" />
+                        </svg>
+                    </div>
+                    <div class="relative">
+                        <h2 class="font-display text-3xl sm:text-4xl font-bold text-white mb-4">Ready to Source from
+                            Peru?</h2>
+                        <p class="text-forest-200/80 mb-8 max-w-md mx-auto">Create a free buyer account and start
+                            browsing our catalog. First order ships within 15 business days.</p>
+                        <div class="flex flex-col sm:flex-row gap-4 justify-center"><button onclick="go('register')"
+                                class="px-8 py-4 bg-terra-500 hover:bg-terra-600 text-white font-bold rounded-xl transition-colors">Create
+                                Buyer Account</button> <button onclick="go('catalog')"
+                                class="px-8 py-4 bg-white/10 hover:bg-white/20 text-white font-bold rounded-xl transition-colors border border-white/20">Browse
+                                Catalog</button>
+                        </div>
+                    </div>
+                </div>
+            </div><!-- Footer -->
+                <!-- FOOTER GRIS OSCURO -->
+    <footer>
+        <div class="footer-inner">
+            <div class="footer-logo">
+                <svg width="40" height="40" viewBox="0 0 180 90" xmlns="http://www.w3.org/2000/svg">
+                    <circle cx="45" cy="45" r="35" fill="none" stroke="#FDCB29" stroke-width="12" />
+                </svg>
+                <h3 style="color:#5AA436; font-size: 22px;">Andina<br><span style="font-size: 10px; color:white; font-family: 'Open Sans', sans-serif;">Corporation Of Consultants</span></h3>
+            </div>
+            
+            <div class="footer-copy">
+                &copy; 2026 Todos los Derechos reservados.<br>Andina Corporation of Consultants SRL
+            </div>
+            
+            <div class="footer-social">
+                <a href="#" class="social-icon">f</a>
+                <a href="#" class="social-icon">t</a>
+                <a href="#" class="social-icon">g</a>
+                <a href="#" class="social-icon">in</a>
+                <!-- Botón scroll up -->
+                <div class="btn-up" onclick="window.scrollTo({top: 0, behavior: 'smooth'})">▲</div>
+            </div>
+        </div>
+    </footer>
+        </section><!-- ===== CATALOG PAGE ===== -->
+        <section id="page-catalog" class="page">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8">
+                    <div>
+                        <h1 class="font-display text-3xl font-bold text-slate2-900">Product Catalog</h1>
+                        <p class="text-slate2-500 mt-1">Wholesale pricing · Direct from producers</p>
+                    </div>
+                    <div class="flex items-center gap-3">
+                        <div class="relative"><i data-lucide="search"
+                                class="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-slate2-400"></i> <input
+                                id="searchInput" type="text" placeholder="Search products..."
+                                class="pl-10 pr-4 py-2.5 border border-slate2-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-forest-500/30 focus:border-forest-500 w-56"
+                                oninput="renderCatalog()" aria-label="Search products">
+                        </div>
+                    </div>
+                </div>
+                <div class="flex flex-col lg:flex-row gap-8"><!-- Filters sidebar -->
+                    <aside class="lg:w-64 flex-shrink-0">
+                        <div class="bg-white rounded-2xl border border-slate2-100 p-6 sticky top-24">
+                            <h3 class="font-bold text-slate2-800 mb-4 flex items-center gap-2"><i data-lucide="filter"
+                                    class="w-4 h-4"></i> Filters</h3>
+                            <div class="mb-6"><label
+                                    class="text-sm font-medium text-slate2-600 mb-2 block">Category</label>
+                                <div class="space-y-2" id="catFilters"><label
+                                        class="flex items-center gap-2 text-sm cursor-pointer"><input type="checkbox"
+                                            value="fruits" class="chk w-4 h-4 rounded border-slate2-300"
+                                            onchange="renderCatalog()"> Fruits</label> <label
+                                        class="flex items-center gap-2 text-sm cursor-pointer"><input type="checkbox"
+                                            value="cacao" class="chk w-4 h-4 rounded border-slate2-300"
+                                            onchange="renderCatalog()"> Cacao &amp; Chocolate</label> <label
+                                        class="flex items-center gap-2 text-sm cursor-pointer"><input type="checkbox"
+                                            value="textiles" class="chk w-4 h-4 rounded border-slate2-300"
+                                            onchange="renderCatalog()"> Textiles</label> <label
+                                        class="flex items-center gap-2 text-sm cursor-pointer"><input type="checkbox"
+                                            value="artisan" class="chk w-4 h-4 rounded border-slate2-300"
+                                            onchange="renderCatalog()"> Artisanal Goods</label>
+                                </div>
+                            </div>
+                            <div class="mb-6"><label
+                                    class="text-sm font-medium text-slate2-600 mb-2 block">Region</label> <select
+                                    id="regionFilter"
+                                    class="w-full border border-slate2-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-forest-500/30"
+                                    onchange="renderCatalog()" aria-label="Filter by region">
+                                    <option value="">All Regions</option>
+                                    <option>Cusco</option>
+                                    <option>Piura</option>
+                                    <option>Ica</option>
+                                    <option>Junín</option>
+                                    <option>Arequipa</option>
+                                    <option>Lima</option>
+                                </select>
+                            </div>
+                            <div><label class="text-sm font-medium text-slate2-600 mb-2 block">Max Price
+                                    (USD/ton)</label> <input type="range" min="500" max="15000" value="15000"
+                                    id="priceFilter" class="w-full"
+                                    oninput="document.getElementById('priceVal').textContent='$'+Number(this.value).toLocaleString();renderCatalog()"
+                                    aria-label="Maximum price filter"> <span id="priceVal"
+                                    class="text-sm text-slate2-500">$15,000</span>
+                            </div><button
+                                class="mt-6 w-full py-2 text-sm text-forest-600 font-medium border border-forest-200 rounded-lg hover:bg-forest-50 transition-colors"
+                                onclick="resetFilters()">Clear Filters</button>
+                        </div>
+                    </aside><!-- Product Grid -->
+                    <div class="flex-1">
+                        <div id="catalogGrid" class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6"></div>
+                        <p id="noResults" class="hidden text-center text-slate2-400 py-16 text-lg">No products match
+                            your filters.</p>
+                    </div>
+                </div>
+            </div>
+        </section><!-- ===== PRODUCT DETAIL PAGE ===== -->
+        <section id="page-product" class="page">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8"><button onclick="go('catalog')"
+                    class="flex items-center gap-2 text-sm text-slate2-500 hover:text-forest-600 mb-6 transition-colors"><i
+                        data-lucide="arrow-left" class="w-4 h-4"></i> Back to Catalog</button>
+                <div id="productDetail" class="grid grid-cols-1 lg:grid-cols-2 gap-10"></div>
+            </div>
+        </section><!-- ===== CART PAGE ===== -->
+        <section id="page-cart" class="page">
+            <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+                <h1 class="font-display text-3xl font-bold text-slate2-900 mb-2">Shopping Cart</h1>
+                <p class="text-slate2-500 mb-8">Review your wholesale order before checkout.</p>
+                <div id="cartItems"></div>
+                <div id="cartEmpty" class="hidden text-center py-20">
+                    <div class="w-20 h-20 rounded-full bg-slate2-100 flex items-center justify-center mx-auto mb-4">
+                        <i data-lucide="shopping-cart" class="w-10 h-10 text-slate2-300"></i>
+                    </div>
+                    <p class="text-slate2-400 text-lg mb-4">Your cart is empty</p><button onclick="go('catalog')"
+                        class="px-6 py-3 bg-forest-600 text-white rounded-xl font-medium hover:bg-forest-700 transition-colors">Browse
+                        Catalog</button>
+                </div>
+                <div id="cartSummary" class="hidden mt-8 bg-white rounded-2xl border border-slate2-100 p-6">
+                    <div class="flex justify-between items-center mb-4">
+                        <span class="text-slate2-600">Subtotal</span><span id="cartSubtotal"
+                            class="text-xl font-bold text-slate2-900">$0</span>
+                    </div>
+                    <div class="flex justify-between items-center mb-4 text-sm">
+                        <span class="text-slate2-500">Estimated Shipping</span><span class="text-slate2-500">Calculated
+                            at checkout</span>
+                    </div>
+                    <div class="border-t border-slate2-100 pt-4 flex justify-between items-center">
+                        <span class="font-bold text-lg">Total</span><span id="cartTotal"
+                            class="text-2xl font-bold grad-text">$0</span>
+                    </div><button onclick="go('checkout')"
+                        class="w-full mt-6 py-4 bg-forest-600 text-white font-bold rounded-xl hover:bg-forest-700 transition-colors text-lg">Proceed
+                        to Checkout</button>
+                </div>
+            </div>
+        </section><!-- ===== CHECKOUT PAGE ===== -->
+        <section id="page-checkout" class="page">
+            <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+                <h1 class="font-display text-3xl font-bold text-slate2-900 mb-8">Checkout</h1>
+                <div id="checkoutSteps" class="flex items-center gap-2 mb-10"><span
+                        class="checkout-step flex items-center gap-2 text-sm font-medium text-forest-600"><span
+                            class="w-7 h-7 rounded-full bg-forest-600 text-white flex items-center justify-center text-xs font-bold">1</span>
+                        Company</span>
+                    <div class="flex-1 h-0.5 bg-slate2-200"></div><span
+                        class="checkout-step flex items-center gap-2 text-sm font-medium text-slate2-400"><span
+                            class="w-7 h-7 rounded-full bg-slate2-200 text-slate2-500 flex items-center justify-center text-xs font-bold">2</span>
+                        Shipping</span>
+                    <div class="flex-1 h-0.5 bg-slate2-200"></div><span
+                        class="checkout-step flex items-center gap-2 text-sm font-medium text-slate2-400"><span
+                            class="w-7 h-7 rounded-full bg-slate2-200 text-slate2-500 flex items-center justify-center text-xs font-bold">3</span>
+                        Payment</span>
+                    <div class="flex-1 h-0.5 bg-slate2-200"></div><span
+                        class="checkout-step flex items-center gap-2 text-sm font-medium text-slate2-400"><span
+                            class="w-7 h-7 rounded-full bg-slate2-200 text-slate2-500 flex items-center justify-center text-xs font-bold">4</span>
+                        Confirm</span>
+                </div>
+                <div id="checkoutContent"></div>
+            </div>
+        </section><!-- ===== LOGIN PAGE ===== -->
+        <section id="page-login" class="page">
+            <div class="flex items-center justify-center min-h-[80%] px-4 py-12">
+                <div class="w-full max-w-md">
+                    <div
+                        class="bg-white rounded-3xl border border-slate2-100 shadow-xl shadow-slate2-200/30 p-8 sm:p-10">
+                        <div class="text-center mb-8">
+                            <div
+                                class="w-14 h-14 rounded-2xl bg-forest-600 flex items-center justify-center mx-auto mb-4">
+                                <svg viewbox="0 0 24 24" class="w-7 h-7 text-white" fill="none" stroke="currentColor"
+                                    stroke-width="2">
+                                    <path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10 10-4.5 10-10S17.5 2 12 2z" />
+                                    <path d="M12 6v6l4 2" />
+                                </svg>
+                            </div>
+                            <h1 class="font-display text-2xl font-bold text-slate2-900">Welcome Back</h1>
+                            <p class="text-slate2-500 text-sm mt-1">Sign in to your buyer account</p>
+                        </div>
+                        <form onsubmit="event.preventDefault();showToast('Login successful!');go('dashboard')">
+                            <div class="mb-4">
+                                <label for="loginEmail"
+                                    class="text-sm font-medium text-slate2-700 mb-1 block">Email</label><input
+                                    id="loginEmail" type="email" required
+                                    class="w-full px-4 py-3 border border-slate2-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-forest-500/30 focus:border-forest-500"
+                                    placeholder="you@company.com">
+                            </div>
+                            <div class="mb-4">
+                                <label for="loginPass"
+                                    class="text-sm font-medium text-slate2-700 mb-1 block">Password</label><input
+                                    id="loginPass" type="password" required
+                                    class="w-full px-4 py-3 border border-slate2-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-forest-500/30 focus:border-forest-500"
+                                    placeholder="••••••••">
+                            </div>
+                            <div class="flex justify-between items-center mb-6">
+                                <label class="flex items-center gap-2 text-sm"><input type="checkbox"
+                                        class="chk w-4 h-4 rounded border-slate2-300"> Remember me</label><a
+                                    class="text-sm text-forest-600 hover:underline cursor-pointer"
+                                    onclick="go('recover')">Forgot password?</a>
+                            </div><button type="submit"
+                                class="w-full py-3.5 bg-forest-600 text-white font-bold rounded-xl hover:bg-forest-700 transition-colors">Sign
+                                In</button>
+                        </form>
+                        <p class="text-center text-sm text-slate2-500 mt-6">Don't have an account? <a
+                                class="text-forest-600 font-medium hover:underline cursor-pointer"
+                                onclick="go('register')">Register</a></p>
+                    </div>
+                </div>
+            </div>
+        </section><!-- ===== REGISTER PAGE ===== -->
+        <section id="page-register" class="page">
+            <div class="flex items-center justify-center min-h-[80%] px-4 py-12">
+                <div class="w-full max-w-lg">
+                    <div
+                        class="bg-white rounded-3xl border border-slate2-100 shadow-xl shadow-slate2-200/30 p-8 sm:p-10">
+                        <div class="text-center mb-8">
+                            <h1 class="font-display text-2xl font-bold text-slate2-900">Create Buyer Account</h1>
+                            <p class="text-slate2-500 text-sm mt-1">Start importing premium Peruvian goods</p>
+                        </div>
+                        <form onsubmit="event.preventDefault();showToast('Account created!');go('dashboard')">
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
+                                <div>
+                                    <label for="regFirst" class="text-sm font-medium text-slate2-700 mb-1 block">First
+                                        Name</label><input id="regFirst" required
+                                        class="w-full px-4 py-3 border border-slate2-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-forest-500/30 focus:border-forest-500"
+                                        placeholder="John">
+                                </div>
+                                <div>
+                                    <label for="regLast" class="text-sm font-medium text-slate2-700 mb-1 block">Last
+                                        Name</label><input id="regLast" required
+                                        class="w-full px-4 py-3 border border-slate2-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-forest-500/30 focus:border-forest-500"
+                                        placeholder="Smith">
+                                </div>
+                            </div>
+                            <div class="mb-4">
+                                <label for="regCompany" class="text-sm font-medium text-slate2-700 mb-1 block">Company
+                                    Name</label><input id="regCompany" required
+                                    class="w-full px-4 py-3 border border-slate2-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-forest-500/30 focus:border-forest-500"
+                                    placeholder="Acme Trading Co.">
+                            </div>
+                            <div class="mb-4">
+                                <label for="regEmail" class="text-sm font-medium text-slate2-700 mb-1 block">Business
+                                    Email</label><input id="regEmail" type="email" required
+                                    class="w-full px-4 py-3 border border-slate2-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-forest-500/30 focus:border-forest-500"
+                                    placeholder="john@acme.com">
+                            </div>
+                            <div class="mb-4">
+                                <label for="regCountry"
+                                    class="text-sm font-medium text-slate2-700 mb-1 block">Country</label><select
+                                    id="regCountry" required
+                                    class="w-full px-4 py-3 border border-slate2-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-forest-500/30 focus:border-forest-500">
+                                    <option value="">Select country</option>
+                                    <option>United States</option>
+                                    <option>Canada</option>
+                                    <option>Germany</option>
+                                    <option>Netherlands</option>
+                                    <option>China</option>
+                                    <option>Japan</option>
+                                    <option>South Korea</option>
+                                    <option>Australia</option>
+                                    <option>Brazil</option>
+                                    <option>Chile</option>
+                                    <option>Colombia</option>
+                                    <option>Mexico</option>
+                                    <option>United Kingdom</option>
+                                    <option>France</option>
+                                    <option>Spain</option>
+                                </select>
+                            </div>
+                            <div class="mb-6">
+                                <label for="regPass2" class="text-sm font-medium text-slate2-700 mb-1 block">Create
+                                    Password</label><input id="regPass2" type="password" required minlength="8"
+                                    class="w-full px-4 py-3 border border-slate2-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-forest-500/30 focus:border-forest-500"
+                                    placeholder="Min. 8 characters">
+                            </div>
+                            <p class="text-xs text-slate2-400 mb-4">Demo registration — no real data is collected or
+                                stored.</p><button type="submit"
+                                class="w-full py-3.5 bg-forest-600 text-white font-bold rounded-xl hover:bg-forest-700 transition-colors">Create
+                                Account</button>
+                        </form>
+                        <p class="text-center text-sm text-slate2-500 mt-6">Already have an account? <a
+                                class="text-forest-600 font-medium hover:underline cursor-pointer"
+                                onclick="go('login')">Sign in</a></p>
+                    </div>
+                </div>
+            </div>
+        </section><!-- ===== PASSWORD RECOVERY ===== -->
+        <section id="page-recover" class="page">
+            <div class="flex items-center justify-center min-h-[80%] px-4 py-12">
+                <div class="w-full max-w-md">
+                    <div
+                        class="bg-white rounded-3xl border border-slate2-100 shadow-xl shadow-slate2-200/30 p-8 sm:p-10 text-center">
+                        <div class="w-14 h-14 rounded-2xl bg-terra-100 flex items-center justify-center mx-auto mb-4">
+                            <i data-lucide="key" class="w-7 h-7 text-terra-600"></i>
+                        </div>
+                        <h1 class="font-display text-2xl font-bold text-slate2-900 mb-2">Reset Password</h1>
+                        <p class="text-slate2-500 text-sm mb-8">Enter your email and we'll send a reset link.</p>
+                        <form onsubmit="event.preventDefault();showToast('Reset link sent (demo)');go('login')">
+                            <div class="mb-6 text-left">
+                                <label for="recoverEmail" class="text-sm font-medium text-slate2-700 mb-1 block">Email
+                                    Address</label><input id="recoverEmail" type="email" required
+                                    class="w-full px-4 py-3 border border-slate2-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-forest-500/30 focus:border-forest-500"
+                                    placeholder="you@company.com">
+                            </div><button type="submit"
+                                class="w-full py-3.5 bg-forest-600 text-white font-bold rounded-xl hover:bg-forest-700 transition-colors">Send
+                                Reset Link</button>
+                        </form><a
+                            class="inline-block text-sm text-forest-600 font-medium mt-6 hover:underline cursor-pointer"
+                            onclick="go('login')">← Back to login</a>
+                    </div>
+                </div>
+            </div>
+        </section><!-- ===== DASHBOARD PAGE ===== -->
+        <section id="page-dashboard" class="page">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8">
+                    <div>
+                        <h1 class="font-display text-3xl font-bold text-slate2-900">Dashboard</h1>
+                        <p class="text-slate2-500 mt-1">Welcome back, Acme Trading Co.</p>
+                    </div><button onclick="go('catalog')"
+                        class="px-5 py-2.5 bg-forest-600 text-white rounded-xl font-medium hover:bg-forest-700 transition-colors text-sm flex items-center gap-2"><i
+                            data-lucide="plus" class="w-4 h-4"></i> New Order</button>
+                </div><!-- Stats -->
+                <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+                    <div class="bg-white rounded-2xl border border-slate2-100 p-5">
+                        <p class="text-sm text-slate2-500">Active Orders</p>
+                        <p class="text-2xl font-bold text-slate2-900 mt-1">7</p><span
+                            class="text-xs text-forest-600 font-medium">↑ 2 this month</span>
+                    </div>
+                    <div class="bg-white rounded-2xl border border-slate2-100 p-5">
+                        <p class="text-sm text-slate2-500">In Transit</p>
+                        <p class="text-2xl font-bold text-slate2-900 mt-1">3</p><span
+                            class="text-xs text-terra-600 font-medium">2 arriving soon</span>
+                    </div>
+                    <div class="bg-white rounded-2xl border border-slate2-100 p-5">
+                        <p class="text-sm text-slate2-500">Total Spent</p>
+                        <p class="text-2xl font-bold text-slate2-900 mt-1">$284K</p><span
+                            class="text-xs text-forest-600 font-medium">↑ 18% YoY</span>
+                    </div>
+                    <div class="bg-white rounded-2xl border border-slate2-100 p-5">
+                        <p class="text-sm text-slate2-500">Documents</p>
+                        <p class="text-2xl font-bold text-slate2-900 mt-1">24</p><span
+                            class="text-xs text-slate2-500 font-medium">3 pending</span>
+                    </div>
+                </div><!-- Company Profile + Orders -->
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6"><!-- Profile -->
+                    <div class="bg-white rounded-2xl border border-slate2-100 p-6">
+                        <h2 class="font-display text-lg font-bold mb-4">Company Profile</h2>
+                        <div class="space-y-3 text-sm">
+                            <div class="flex justify-between">
+                                <span class="text-slate2-500">Company</span><span class="font-medium">Acme Trading
+                                    Co.</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-slate2-500">Contact</span><span class="font-medium">John Smith</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-slate2-500">Email</span><span class="font-medium">john@acme.com</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-slate2-500">Country</span><span class="font-medium">United
+                                    States</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-slate2-500">Member Since</span><span class="font-medium">Jan
+                                    2024</span>
+                            </div>
+                        </div><button
+                            class="mt-6 w-full py-2.5 border border-slate2-200 rounded-xl text-sm font-medium text-slate2-600 hover:bg-slate2-50 transition-colors">Edit
+                            Profile</button>
+                    </div><!-- Order History -->
+                    <div class="lg:col-span-2 bg-white rounded-2xl border border-slate2-100 p-6">
+                        <h2 class="font-display text-lg font-bold mb-4">Recent Orders</h2>
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-sm">
+                                <thead>
+                                    <tr class="border-b border-slate2-100 text-left text-slate2-500">
+                                        <th class="pb-3 font-medium">Order</th>
+                                        <th class="pb-3 font-medium">Product</th>
+                                        <th class="pb-3 font-medium">Amount</th>
+                                        <th class="pb-3 font-medium">Status</th>
+                                        <th class="pb-3 font-medium"></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr class="border-b border-slate2-50 hover:bg-slate2-50/50">
+                                        <td class="py-3 font-medium">#PE-4821</td>
+                                        <td>Hass Avocado</td>
+                                        <td>$42,500</td>
+                                        <td><span
+                                                class="px-2.5 py-1 bg-blue-100 text-blue-700 rounded-full text-xs font-medium">In
+                                                Transit</span></td>
+                                        <td><button onclick="go('tracking')"
+                                                class="text-forest-600 hover:underline text-xs font-medium">Track</button>
+                                        </td>
+                                    </tr>
+                                    <tr class="border-b border-slate2-50 hover:bg-slate2-50/50">
+                                        <td class="py-3 font-medium">#PE-4798</td>
+                                        <td>Cacao Beans (Organic)</td>
+                                        <td>$28,000</td>
+                                        <td><span
+                                                class="px-2.5 py-1 bg-amber-100 text-amber-700 rounded-full text-xs font-medium">Preparing</span>
+                                        </td>
+                                        <td><button class="text-slate2-400 text-xs">Pending</button></td>
+                                    </tr>
+                                    <tr class="border-b border-slate2-50 hover:bg-slate2-50/50">
+                                        <td class="py-3 font-medium">#PE-4756</td>
+                                        <td>Alpaca Wool</td>
+                                        <td>$18,200</td>
+                                        <td><span
+                                                class="px-2.5 py-1 bg-green-100 text-green-700 rounded-full text-xs font-medium">Delivered</span>
+                                        </td>
+                                        <td><button onclick="go('documents')"
+                                                class="text-forest-600 hover:underline text-xs font-medium">Invoice</button>
+                                        </td>
+                                    </tr>
+                                    <tr class="hover:bg-slate2-50/50">
+                                        <td class="py-3 font-medium">#PE-4701</td>
+                                        <td>Kent Mango</td>
+                                        <td>$35,800</td>
+                                        <td><span
+                                                class="px-2.5 py-1 bg-green-100 text-green-700 rounded-full text-xs font-medium">Delivered</span>
+                                        </td>
+                                        <td><button onclick="go('documents')"
+                                                class="text-forest-600 hover:underline text-xs font-medium">Invoice</button>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section><!-- ===== TRACKING PAGE ===== -->
+        <section id="page-tracking" class="page">
+            <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+                <h1 class="font-display text-3xl font-bold text-slate2-900 mb-2">Shipment Tracking</h1>
+                <p class="text-slate2-500 mb-8">Order #PE-4821 · Hass Avocado · 25 tons</p><!-- Container info -->
+                <div class="bg-white rounded-2xl border border-slate2-100 p-6 mb-8">
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-6 text-sm">
+                        <div>
+                            <span class="text-slate2-500 block">Container</span><span
+                                class="font-bold text-slate2-900">MSKU-7284910</span>
+                        </div>
+                        <div>
+                            <span class="text-slate2-500 block">Vessel</span><span class="font-bold text-slate2-900">MSC
+                                Pacifica</span>
+                        </div>
+                        <div>
+                            <span class="text-slate2-500 block">Origin Port</span><span
+                                class="font-bold text-slate2-900">Callao, Peru</span>
+                        </div>
+                        <div>
+                            <span class="text-slate2-500 block">Destination</span><span
+                                class="font-bold text-slate2-900">Los Angeles, USA</span>
+                        </div>
+                    </div>
+                </div><!-- Progress bar -->
+                <div class="bg-white rounded-2xl border border-slate2-100 p-6 mb-8">
+                    <div class="flex justify-between text-xs text-slate2-500 mb-2">
+                        <span>Callao</span><span>Panama Canal</span><span>Los Angeles</span>
+                    </div>
+                    <div class="w-full h-3 bg-slate2-100 rounded-full overflow-hidden">
+                        <div class="h-full bg-gradient-to-r from-forest-600 to-forest-400 rounded-full"
+                            style="width:65%"></div>
+                    </div>
+                    <p class="text-sm text-forest-600 font-medium mt-3">Estimated arrival: Jan 28, 2025 (6 days)</p>
+                </div><!-- Timeline -->
+                <div class="bg-white rounded-2xl border border-slate2-100 p-6">
+                    <h2 class="font-display text-lg font-bold mb-6">Shipment Timeline</h2>
+                    <div class="space-y-0">
+                        <div class="flex gap-4 relative pb-8">
+                            <div class="flex flex-col items-center">
+                                <div class="timeline-dot filled"></div>
+                                <div class="timeline-line done"></div>
+                            </div>
+                            <div>
+                                <p class="font-medium text-slate2-900">Production Complete</p>
+                                <p class="text-sm text-slate2-500">Jan 5, 2025 · Ica, Peru</p>
+                                <p class="text-xs text-slate2-400 mt-1">Quality inspection passed. 25 tons packaged.</p>
+                            </div>
+                        </div>
+                        <div class="flex gap-4 relative pb-8">
+                            <div class="flex flex-col items-center">
+                                <div class="timeline-dot filled"></div>
+                                <div class="timeline-line done"></div>
+                            </div>
+                            <div>
+                                <p class="font-medium text-slate2-900">Departed Port of Origin</p>
+                                <p class="text-sm text-slate2-500">Jan 8, 2025 · Callao, Peru</p>
+                                <p class="text-xs text-slate2-400 mt-1">Container loaded onto MSC Pacifica.</p>
+                            </div>
+                        </div>
+                        <div class="flex gap-4 relative pb-8">
+                            <div class="flex flex-col items-center">
+                                <div class="timeline-dot filled"></div>
+                                <div class="timeline-line"></div>
+                            </div>
+                            <div>
+                                <p class="font-medium text-forest-700">In Maritime Transit</p>
+                                <p class="text-sm text-slate2-500">Jan 22, 2025 · Pacific Ocean</p>
+                                <p class="text-xs text-terra-600 mt-1">Currently navigating — 65% complete</p>
+                            </div>
+                        </div>
+                        <div class="flex gap-4 relative pb-8">
+                            <div class="flex flex-col items-center">
+                                <div class="timeline-dot"></div>
+                                <div class="timeline-line"></div>
+                            </div>
+                            <div>
+                                <p class="font-medium text-slate2-400">Arrival at Destination Port</p>
+                                <p class="text-sm text-slate2-400">Est. Jan 28, 2025 · Los Angeles, USA</p>
+                            </div>
+                        </div>
+                        <div class="flex gap-4 relative">
+                            <div class="flex flex-col items-center">
+                                <div class="timeline-dot"></div>
+                            </div>
+                            <div>
+                                <p class="font-medium text-slate2-400">Customs &amp; Delivery</p>
+                                <p class="text-sm text-slate2-400">Est. Jan 31, 2025</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section><!-- ===== DOCUMENTS PAGE ===== -->
+        <section id="page-documents" class="page">
+            <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+                <h1 class="font-display text-3xl font-bold text-slate2-900 mb-2">My Documents</h1>
+                <p class="text-slate2-500 mb-8">Contracts, invoices &amp; trade documentation.</p>
+                <div class="space-y-3">
+                    <div
+                        class="bg-white rounded-2xl border border-slate2-100 p-5 flex items-center justify-between hover:border-forest-200 transition-colors">
+                        <div class="flex items-center gap-4">
+                            <div class="w-11 h-11 rounded-xl bg-red-50 flex items-center justify-center">
+                                <i data-lucide="file-text" class="w-5 h-5 text-red-500"></i>
+                            </div>
+                            <div>
+                                <p class="font-medium text-slate2-900">Invoice #INV-4821</p>
+                                <p class="text-xs text-slate2-500">Hass Avocado — $42,500 · Jan 8, 2025</p>
+                            </div>
+                        </div><button
+                            class="px-4 py-2 border border-slate2-200 rounded-lg text-sm font-medium text-slate2-600 hover:bg-slate2-50 flex items-center gap-2 transition-colors"
+                            onclick="showToast('Download started (demo)')"><i data-lucide="download"
+                                class="w-4 h-4"></i> PDF</button>
+                    </div>
+                    <div
+                        class="bg-white rounded-2xl border border-slate2-100 p-5 flex items-center justify-between hover:border-forest-200 transition-colors">
+                        <div class="flex items-center gap-4">
+                            <div class="w-11 h-11 rounded-xl bg-blue-50 flex items-center justify-center">
+                                <i data-lucide="file-text" class="w-5 h-5 text-blue-500"></i>
+                            </div>
+                            <div>
+                                <p class="font-medium text-slate2-900">Purchase Contract — Cacao Q1 2025</p>
+                                <p class="text-xs text-slate2-500">Signed · Dec 15, 2024</p>
+                            </div>
+                        </div><button
+                            class="px-4 py-2 border border-slate2-200 rounded-lg text-sm font-medium text-slate2-600 hover:bg-slate2-50 flex items-center gap-2 transition-colors"
+                            onclick="showToast('Download started (demo)')"><i data-lucide="download"
+                                class="w-4 h-4"></i> PDF</button>
+                    </div>
+                    <div
+                        class="bg-white rounded-2xl border border-slate2-100 p-5 flex items-center justify-between hover:border-forest-200 transition-colors">
+                        <div class="flex items-center gap-4">
+                            <div class="w-11 h-11 rounded-xl bg-green-50 flex items-center justify-center">
+                                <i data-lucide="file-text" class="w-5 h-5 text-green-500"></i>
+                            </div>
+                            <div>
+                                <p class="font-medium text-slate2-900">Phytosanitary Certificate — Mango</p>
+                                <p class="text-xs text-slate2-500">SENASA · Nov 28, 2024</p>
+                            </div>
+                        </div><button
+                            class="px-4 py-2 border border-slate2-200 rounded-lg text-sm font-medium text-slate2-600 hover:bg-slate2-50 flex items-center gap-2 transition-colors"
+                            onclick="showToast('Download started (demo)')"><i data-lucide="download"
+                                class="w-4 h-4"></i> PDF</button>
+                    </div>
+                    <div
+                        class="bg-white rounded-2xl border border-slate2-100 p-5 flex items-center justify-between hover:border-forest-200 transition-colors">
+                        <div class="flex items-center gap-4">
+                            <div class="w-11 h-11 rounded-xl bg-amber-50 flex items-center justify-center">
+                                <i data-lucide="file-text" class="w-5 h-5 text-amber-500"></i>
+                            </div>
+                            <div>
+                                <p class="font-medium text-slate2-900">Bill of Lading — #PE-4756</p>
+                                <p class="text-xs text-slate2-500">Alpaca Wool · Oct 12, 2024</p>
+                            </div>
+                        </div><button
+                            class="px-4 py-2 border border-slate2-200 rounded-lg text-sm font-medium text-slate2-600 hover:bg-slate2-50 flex items-center gap-2 transition-colors"
+                            onclick="showToast('Download started (demo)')"><i data-lucide="download"
+                                class="w-4 h-4"></i> PDF</button>
+                    </div>
+                    <div
+                        class="bg-white rounded-2xl border border-slate2-100 p-5 flex items-center justify-between hover:border-forest-200 transition-colors">
+                        <div class="flex items-center gap-4">
+                            <div class="w-11 h-11 rounded-xl bg-purple-50 flex items-center justify-center">
+                                <i data-lucide="file-text" class="w-5 h-5 text-purple-500"></i>
+                            </div>
+                            <div>
+                                <p class="font-medium text-slate2-900">Certificate of Origin — Organic Cacao</p>
+                                <p class="text-xs text-slate2-500">Chamber of Commerce · Sep 20, 2024</p>
+                            </div>
+                        </div><button
+                            class="px-4 py-2 border border-slate2-200 rounded-lg text-sm font-medium text-slate2-600 hover:bg-slate2-50 flex items-center gap-2 transition-colors"
+                            onclick="showToast('Download started (demo)')"><i data-lucide="download"
+                                class="w-4 h-4"></i> PDF</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+    <script>
+        // ========== MOCK DATA ==========
+        const PRODUCTS = [
+            { id: 1, name: 'Hass Avocado', cat: 'fruits', region: 'Ica', emoji: '🥑', price: 2800, moq: 10, unit: 'ton', desc: 'Premium Hass avocados, caliber 12-28, export grade. Year-round availability from Ica valley.', certs: ['GLOBALG.A.P.', 'HACCP', 'Organic'], capacity: '5,000 tons/year', gradient: 'from-green-400 to-emerald-600' },
+            { id: 2, name: 'Kent Mango', cat: 'fruits', region: 'Piura', emoji: '🥭', price: 1800, moq: 15, unit: 'ton', desc: 'Sweet Kent mangoes, Brix 14+, sourced from Piura\'s tropical lowlands.', certs: ['GLOBALG.A.P.', 'Fair Trade'], capacity: '3,200 tons/year', gradient: 'from-orange-400 to-red-500' },
+            { id: 3, name: 'Fresh Blueberries', cat: 'fruits', region: 'Lima', emoji: '🫐', price: 6500, moq: 5, unit: 'ton', desc: 'Counter-seasonal blueberries, size 18mm+, packed in clamshells or bulk.', certs: ['GLOBALG.A.P.', 'BRC', 'Organic'], capacity: '1,800 tons/year', gradient: 'from-indigo-400 to-purple-600' },
+            { id: 4, name: 'Red Globe Grapes', cat: 'fruits', region: 'Ica', emoji: '🍇', price: 2200, moq: 12, unit: 'ton', desc: 'Table grapes, firm texture, long shelf-life. Available Oct-Feb.', certs: ['GLOBALG.A.P.'], capacity: '4,000 tons/year', gradient: 'from-purple-400 to-pink-600' },
+            { id: 5, name: 'Organic Cacao Beans', cat: 'cacao', region: 'Cusco', emoji: '🫘', price: 4500, moq: 5, unit: 'ton', desc: 'Single-origin Criollo cacao from Sacred Valley. Fermented 6 days, sun-dried.', certs: ['Organic', 'Fair Trade', 'Rainforest Alliance'], capacity: '800 tons/year', gradient: 'from-amber-700 to-yellow-900' },
+            { id: 6, name: 'Dark Chocolate 72%', cat: 'cacao', region: 'Cusco', emoji: '🍫', price: 12000, moq: 2, unit: 'ton', desc: 'Bean-to-bar dark chocolate, 72% cacao. Stone-ground, conched 48hrs.', certs: ['Organic', 'BRC'], capacity: '200 tons/year', gradient: 'from-stone-700 to-stone-900' },
+            { id: 7, name: 'Alpaca Wool Fiber', cat: 'textiles', region: 'Arequipa', emoji: '🧶', price: 8500, moq: 3, unit: 'ton', desc: 'Baby alpaca fiber, 22 micron, natural colors. From Arequipa highlands.', certs: ['OEKO-TEX'], capacity: '120 tons/year', gradient: 'from-rose-300 to-rose-600' },
+            { id: 8, name: 'Pima Cotton Yarn', cat: 'textiles', region: 'Piura', emoji: '🧵', price: 5200, moq: 5, unit: 'ton', desc: 'Extra-long staple Pima cotton, 35mm+, mercerized. Premium softness.', certs: ['GOTS', 'OEKO-TEX'], capacity: '500 tons/year', gradient: 'from-sky-300 to-blue-500' },
+            { id: 9, name: 'Handwoven Textiles', cat: 'textiles', region: 'Cusco', emoji: '🪡', price: 14000, moq: 1, unit: 'ton', desc: 'Traditional Andean patterns, handwoven on backstrap looms by artisan communities.', certs: ['Fair Trade'], capacity: '15 tons/year', gradient: 'from-fuchsia-400 to-violet-600' },
+            { id: 10, name: 'Ceramic Pottery Set', cat: 'artisan', region: 'Cusco', emoji: '🏺', price: 9000, moq: 2, unit: 'ton', desc: 'Hand-painted Cusco-style ceramics. Each piece unique, lead-free glazes.', certs: ['Fair Trade'], capacity: '30 tons/year', gradient: 'from-terra-400 to-terra-700' },
+            { id: 11, name: 'Silver Jewelry Collection', cat: 'artisan', region: 'Lima', emoji: '💍', price: 13500, moq: 1, unit: 'ton', desc: '925 sterling silver jewelry with semi-precious Peruvian stones.', certs: ['Fair Trade'], capacity: '8 tons/year', gradient: 'from-slate-400 to-slate-600' },
+            { id: 12, name: 'Quinoa (White)', cat: 'fruits', region: 'Junín', emoji: '🌾', price: 3200, moq: 10, unit: 'ton', desc: 'Triple-washed white quinoa, organic certified. Protein content 14%+.', certs: ['Organic', 'HACCP', 'BRC'], capacity: '2,500 tons/year', gradient: 'from-yellow-300 to-amber-500' },
+        ];
+
+        // ========== CART STATE ==========
+        let cart = [];
+
+        function updateCartBadge() {
+            const b = document.getElementById('cartBadge');
+            if (cart.length > 0) { b.textContent = cart.length; b.classList.remove('hidden') } else { b.classList.add('hidden') }
+        }
+
+        function addToCart(id, qty) {
+            const p = PRODUCTS.find(x => x.id === id); if (!p) return;
+            const existing = cart.find(x => x.id === id);
+            if (existing) { existing.qty += qty } else { cart.push({ ...p, qty }) }
+            updateCartBadge();
+            showToast(`${p.name} added to cart!`);
+        }
+
+        function removeFromCart(id) { cart = cart.filter(x => x.id !== id); updateCartBadge(); renderCart() }
+
+        function renderCart() {
+            const items = document.getElementById('cartItems');
+            const empty = document.getElementById('cartEmpty');
+            const summary = document.getElementById('cartSummary');
+            if (cart.length === 0) { items.innerHTML = ''; empty.classList.remove('hidden'); summary.classList.add('hidden'); return }
+            empty.classList.add('hidden'); summary.classList.remove('hidden');
+            let total = 0;
+            items.innerHTML = cart.map(c => {
+                const sub = c.price * c.qty; total += sub;
+                return `<div class="bg-white rounded-2xl border border-slate2-100 p-5 flex items-center gap-4 mb-3">
+      <div class="w-14 h-14 rounded-xl bg-gradient-to-br ${c.gradient} flex items-center justify-center text-2xl flex-shrink-0">${c.emoji}</div>
+      <div class="flex-1 min-w-0"><p class="font-medium text-slate2-900 truncate">${c.name}</p><p class="text-sm text-slate2-500">${c.qty} ${c.unit}${c.qty > 1 ? 's' : ''} × $${c.price.toLocaleString()}</p></div>
+      <div class="text-right flex-shrink-0"><p class="font-bold text-slate2-900">$${sub.toLocaleString()}</p><button onclick="removeFromCart(${c.id})" class="text-xs text-red-500 hover:underline mt-1">Remove</button></div>
+    </div>`;
+            }).join('');
+            document.getElementById('cartSubtotal').textContent = '$' + total.toLocaleString();
+            document.getElementById('cartTotal').textContent = '$' + total.toLocaleString();
+        }
+
+        // ========== CATALOG ==========
+        function renderCatalog() {
+            const grid = document.getElementById('catalogGrid');
+            const search = document.getElementById('searchInput').value.toLowerCase();
+            const checkedCats = [...document.querySelectorAll('#catFilters input:checked')].map(x => x.value);
+            const region = document.getElementById('regionFilter').value;
+            const maxPrice = Number(document.getElementById('priceFilter').value);
+
+            let filtered = PRODUCTS.filter(p => {
+                if (search && !p.name.toLowerCase().includes(search) && !p.cat.includes(search)) return false;
+                if (checkedCats.length && !checkedCats.includes(p.cat)) return false;
+                if (region && p.region !== region) return false;
+                if (p.price > maxPrice) return false;
+                return true;
+            });
+
+            document.getElementById('noResults').classList.toggle('hidden', filtered.length > 0);
+            grid.innerHTML = filtered.map(p => `
+    <div class="card-lift bg-white rounded-2xl border border-slate2-100 overflow-hidden cursor-pointer" onclick="showProduct(${p.id})">
+      <div class="h-44 bg-gradient-to-br ${p.gradient} flex items-center justify-center text-5xl">${p.emoji}</div>
+      <div class="p-5">
+        <div class="flex items-start justify-between gap-2 mb-2"><h3 class="font-display text-lg font-bold text-slate2-900 leading-snug">${p.name}</h3><span class="text-xs px-2 py-1 bg-slate2-100 text-slate2-600 rounded-full flex-shrink-0 capitalize">${p.cat}</span></div>
+        <p class="text-sm text-slate2-500 mb-3">${p.region}, Peru</p>
+        <div class="flex justify-between items-end">
+          <div><span class="text-xl font-bold text-forest-700">$${p.price.toLocaleString()}</span><span class="text-xs text-slate2-400">/${p.unit}</span></div>
+          <span class="text-xs text-terra-600 font-medium">MOQ: ${p.moq} ${p.unit}s</span>
+        </div>
+      </div>
+    </div>
+  `).join('');
+            lucide.createIcons();
+        }
+
+        function filterCatalog(cat) {
+            go('catalog');
+            document.querySelectorAll('#catFilters input').forEach(x => { x.checked = x.value === cat });
+            renderCatalog();
+        }
+
+        function resetFilters() {
+            document.getElementById('searchInput').value = '';
+            document.querySelectorAll('#catFilters input').forEach(x => x.checked = false);
+            document.getElementById('regionFilter').value = '';
+            document.getElementById('priceFilter').value = 15000;
+            document.getElementById('priceVal').textContent = '$15,000';
+            renderCatalog();
+        }
+
+        // ========== PRODUCT DETAIL ==========
+        function showProduct(id) {
+            const p = PRODUCTS.find(x => x.id === id); if (!p) return;
+            go('product');
+            const d = document.getElementById('productDetail');
+            d.innerHTML = `
+    <div class="rounded-3xl bg-gradient-to-br ${p.gradient} flex items-center justify-center text-8xl aspect-square max-h-96 lg:max-h-none">${p.emoji}</div>
+    <div>
+      <span class="text-sm text-terra-600 font-medium uppercase tracking-wider">${p.cat} · ${p.region}</span>
+      <h1 class="font-display text-3xl sm:text-4xl font-bold text-slate2-900 mt-2 mb-4">${p.name}</h1>
+      <p class="text-slate2-600 leading-relaxed mb-6">${p.desc}</p>
+      <div class="grid grid-cols-2 gap-4 mb-6">
+        <div class="bg-slate2-50 rounded-xl p-4"><span class="text-xs text-slate2-500 block">Price per ${p.unit}</span><span class="text-2xl font-bold text-forest-700">$${p.price.toLocaleString()}</span></div>
+        <div class="bg-slate2-50 rounded-xl p-4"><span class="text-xs text-slate2-500 block">Min. Order</span><span class="text-2xl font-bold text-slate2-900">${p.moq} ${p.unit}s</span></div>
+        <div class="bg-slate2-50 rounded-xl p-4"><span class="text-xs text-slate2-500 block">Export Capacity</span><span class="text-lg font-bold text-slate2-900">${p.capacity}</span></div>
+        <div class="bg-slate2-50 rounded-xl p-4"><span class="text-xs text-slate2-500 block">Origin</span><span class="text-lg font-bold text-slate2-900">${p.region}, Peru</span></div>
+      </div>
+      <div class="mb-6"><h3 class="text-sm font-medium text-slate2-700 mb-2">Certifications</h3><div class="flex flex-wrap gap-2">${p.certs.map(c => `<span class="px-3 py-1.5 bg-forest-50 text-forest-700 rounded-lg text-xs font-medium">${c}</span>`).join('')}</div></div>
+      <div class="flex items-center gap-3 mb-6">
+        <label for="prodQty" class="text-sm font-medium text-slate2-700">Quantity (${p.unit}s):</label>
+        <input id="prodQty" type="number" min="${p.moq}" value="${p.moq}" class="w-24 px-3 py-2.5 border border-slate2-200 rounded-xl text-center font-medium focus:outline-none focus:ring-2 focus:ring-forest-500/30 focus:border-forest-500">
+      </div>
+      <div class="flex flex-col sm:flex-row gap-3">
+        <button onclick="addToCart(${p.id},Number(document.getElementById('prodQty').value))" class="flex-1 py-3.5 bg-forest-600 text-white font-bold rounded-xl hover:bg-forest-700 transition-colors flex items-center justify-center gap-2"><i data-lucide="shopping-cart" class="w-5 h-5"></i> Add to Cart</button>
+        <button onclick="showToast('Quote request sent (demo)')" class="flex-1 py-3.5 border-2 border-terra-500 text-terra-600 font-bold rounded-xl hover:bg-terra-50 transition-colors flex items-center justify-center gap-2"><i data-lucide="mail" class="w-5 h-5"></i> Request Quote</button>
+      </div>
+    </div>`;
+            lucide.createIcons();
+        }
+
+        // ========== CHECKOUT ==========
+        let checkoutStep = 1;
+
+        function renderCheckout() {
+            const c = document.getElementById('checkoutContent');
+            const steps = document.querySelectorAll('.checkout-step');
+            steps.forEach((s, i) => {
+                const num = s.querySelector('span');
+                if (i < checkoutStep) { num.className = 'w-7 h-7 rounded-full bg-forest-600 text-white flex items-center justify-center text-xs font-bold'; s.classList.remove('text-slate2-400'); s.classList.add('text-forest-600') }
+                else { num.className = 'w-7 h-7 rounded-full bg-slate2-200 text-slate2-500 flex items-center justify-center text-xs font-bold'; s.classList.remove('text-forest-600'); s.classList.add('text-slate2-400') }
+            });
+
+            if (checkoutStep === 1) {
+                c.innerHTML = `<div class="bg-white rounded-2xl border border-slate2-100 p-6 sm:p-8">
+      <h2 class="font-display text-xl font-bold mb-6">Company Information</h2>
+      <form onsubmit="event.preventDefault();checkoutStep=2;renderCheckout()">
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4"><div><label for="coName" class="text-sm font-medium text-slate2-700 mb-1 block">Company Name</label><input id="coName" required class="w-full px-4 py-3 border border-slate2-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-forest-500/30" value="Acme Trading Co."></div><div><label for="coTax" class="text-sm font-medium text-slate2-700 mb-1 block">Tax ID / VAT</label><input id="coTax" required class="w-full px-4 py-3 border border-slate2-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-forest-500/30" placeholder="US-123456789"></div></div>
+        <div class="mb-4"><label for="coEmail" class="text-sm font-medium text-slate2-700 mb-1 block">Contact Email</label><input id="coEmail" type="email" required class="w-full px-4 py-3 border border-slate2-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-forest-500/30" value="john@acme.com"></div>
+        <div class="mb-6"><label for="coPhone" class="text-sm font-medium text-slate2-700 mb-1 block">Phone</label><input id="coPhone" type="tel" required class="w-full px-4 py-3 border border-slate2-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-forest-500/30" placeholder="+1 555 123 4567"></div>
+        <button type="submit" class="px-8 py-3.5 bg-forest-600 text-white font-bold rounded-xl hover:bg-forest-700 transition-colors">Continue to Shipping →</button>
+      </form></div>`;
+            } else if (checkoutStep === 2) {
+                c.innerHTML = `<div class="bg-white rounded-2xl border border-slate2-100 p-6 sm:p-8">
+      <h2 class="font-display text-xl font-bold mb-6">Shipping Address</h2>
+      <form onsubmit="event.preventDefault();checkoutStep=3;renderCheckout()">
+        <div class="mb-4"><label for="shAddr" class="text-sm font-medium text-slate2-700 mb-1 block">Street Address</label><input id="shAddr" required class="w-full px-4 py-3 border border-slate2-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-forest-500/30" placeholder="123 Trade Blvd"></div>
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-4"><div><label for="shCity" class="text-sm font-medium text-slate2-700 mb-1 block">City</label><input id="shCity" required class="w-full px-4 py-3 border border-slate2-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-forest-500/30" placeholder="Los Angeles"></div><div><label for="shState" class="text-sm font-medium text-slate2-700 mb-1 block">State</label><input id="shState" class="w-full px-4 py-3 border border-slate2-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-forest-500/30" placeholder="CA"></div><div><label for="shZip" class="text-sm font-medium text-slate2-700 mb-1 block">Zip Code</label><input id="shZip" class="w-full px-4 py-3 border border-slate2-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-forest-500/30" placeholder="90001"></div></div>
+        <div class="mb-4"><label for="shCountry" class="text-sm font-medium text-slate2-700 mb-1 block">Country</label><select id="shCountry" required class="w-full px-4 py-3 border border-slate2-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-forest-500/30"><option>United States</option><option>Canada</option><option>Germany</option><option>Netherlands</option><option>China</option><option>Japan</option><option>Australia</option><option>Brazil</option><option>United Kingdom</option></select></div>
+        <div class="mb-6"><label for="shInco" class="text-sm font-medium text-slate2-700 mb-1 block">Incoterm</label><select id="shInco" class="w-full px-4 py-3 border border-slate2-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-forest-500/30"><option>FOB (Free on Board)</option><option>CIF (Cost, Insurance, Freight)</option><option>CFR (Cost and Freight)</option><option>EXW (Ex Works)</option></select></div>
+        <div class="flex gap-3"><button type="button" onclick="checkoutStep=1;renderCheckout()" class="px-6 py-3.5 border border-slate2-200 rounded-xl font-medium text-slate2-600 hover:bg-slate2-50 transition-colors">← Back</button><button type="submit" class="px-8 py-3.5 bg-forest-600 text-white font-bold rounded-xl hover:bg-forest-700 transition-colors">Continue to Payment →</button></div>
+      </form></div>`;
+            } else if (checkoutStep === 3) {
+                c.innerHTML = `<div class="bg-white rounded-2xl border border-slate2-100 p-6 sm:p-8">
+      <h2 class="font-display text-xl font-bold mb-6">Payment Method</h2>
+      <p class="text-xs text-slate2-400 mb-6 bg-amber-50 border border-amber-200 rounded-lg p-3">⚠️ Demo checkout — no real payment is processed.</p>
+      <form onsubmit="event.preventDefault();checkoutStep=4;renderCheckout()">
+        <div class="space-y-3 mb-6">
+          <label class="flex items-center gap-3 p-4 border border-slate2-200 rounded-xl cursor-pointer hover:border-forest-300 transition-colors"><input type="radio" name="pay" value="wire" checked class="w-4 h-4 text-forest-600"><div><span class="font-medium text-slate2-900">Wire Transfer (T/T)</span><p class="text-xs text-slate2-500">30% advance, 70% before shipment</p></div></label>
+          <label class="flex items-center gap-3 p-4 border border-slate2-200 rounded-xl cursor-pointer hover:border-forest-300 transition-colors"><input type="radio" name="pay" value="lc" class="w-4 h-4 text-forest-600"><div><span class="font-medium text-slate2-900">Letter of Credit (L/C)</span><p class="text-xs text-slate2-500">Irrevocable L/C at sight</p></div></label>
+          <label class="flex items-center gap-3 p-4 border border-slate2-200 rounded-xl cursor-pointer hover:border-forest-300 transition-colors"><input type="radio" name="pay" value="escrow" class="w-4 h-4 text-forest-600"><div><span class="font-medium text-slate2-900">Trade Assurance / Escrow</span><p class="text-xs text-slate2-500">Payment released on delivery confirmation</p></div></label>
+        </div>
+        <div class="flex gap-3"><button type="button" onclick="checkoutStep=2;renderCheckout()" class="px-6 py-3.5 border border-slate2-200 rounded-xl font-medium text-slate2-600 hover:bg-slate2-50 transition-colors">← Back</button><button type="submit" class="px-8 py-3.5 bg-forest-600 text-white font-bold rounded-xl hover:bg-forest-700 transition-colors">Review Order →</button></div>
+      </form></div>`;
+            } else {
+                const total = cart.reduce((s, c) => s + c.price * c.qty, 0);
+                c.innerHTML = `<div class="bg-white rounded-2xl border border-slate2-100 p-6 sm:p-8 text-center">
+      <div class="w-20 h-20 rounded-full bg-forest-100 flex items-center justify-center mx-auto mb-6"><i data-lucide="check-circle" class="w-10 h-10 text-forest-600"></i></div>
+      <h2 class="font-display text-2xl font-bold text-slate2-900 mb-2">Order Confirmed!</h2>
+      <p class="text-slate2-500 mb-6">Order #PE-${4822 + Math.floor(Math.random() * 100)} · Total: $${total.toLocaleString()}</p>
+      <p class="text-sm text-slate2-400 mb-8">This is a demo confirmation. In production, you would receive an email with order details and payment instructions.</p>
+      <div class="flex flex-col sm:flex-row gap-3 justify-center">
+        <button onclick="go('dashboard')" class="px-6 py-3 bg-forest-600 text-white font-bold rounded-xl hover:bg-forest-700 transition-colors">Go to Dashboard</button>
+        <button onclick="go('tracking')" class="px-6 py-3 border border-slate2-200 rounded-xl font-medium text-slate2-600 hover:bg-slate2-50 transition-colors">Track Shipment</button>
+      </div>
+    </div>`;
+                cart = []; updateCartBadge();
+                lucide.createIcons();
+            }
+        }
+
+        // ========== NAVIGATION ==========
+        function go(page) {
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            const el = document.getElementById('page-' + page);
+            if (el) { el.classList.add('active'); window.scrollTo(0, 0) }
+            // Render dynamic pages
+            if (page === 'catalog') renderCatalog();
+            if (page === 'cart') renderCart();
+            if (page === 'checkout') { checkoutStep = 1; renderCheckout() }
+        }
+
+        function openMobileNav() { document.getElementById('mobileNav').classList.remove('hidden') }
+        function closeMobileNav() { document.getElementById('mobileNav').classList.add('hidden') }
+
+        // ========== TOAST ==========
+        function showToast(msg) {
+            const t = document.getElementById('toast');
+            t.textContent = msg; t.classList.add('show');
+            setTimeout(() => t.classList.remove('show'), 2500);
+        }
+
+        // ========== ELEMENT SDK ==========
+        const defaultConfig = {
+            background_color: '#f8f9fa',
+            surface_color: '#ffffff',
+            text_color: '#212529',
+            primary_color: '#2d7a3a',
+            accent_color: '#c77f2a',
+            font_family: 'DM Sans',
+            font_size: 16,
+            hero_title: 'Premium Agricultural Exports from Peru',
+            hero_subtitle: 'Source the finest fruits, cacao, textiles & artisan goods directly from certified Peruvian producers. B2B wholesale with full logistics.',
+            company_name: 'PeruAgro',
+            cta_quote: 'Request a Quote',
+            cta_wholesale: 'Buy Wholesale'
+        };
+
+        function applyConfig(cfg) {
+            const bg = cfg.background_color || defaultConfig.background_color;
+            const surface = cfg.surface_color || defaultConfig.surface_color;
+            const text = cfg.text_color || defaultConfig.text_color;
+            const primary = cfg.primary_color || defaultConfig.primary_color;
+            const accent = cfg.accent_color || defaultConfig.accent_color;
+            const font = cfg.font_family || defaultConfig.font_family;
+            const size = cfg.font_size || defaultConfig.font_size;
+
+            document.body.style.backgroundColor = bg;
+            document.body.style.color = text;
+            document.body.style.fontFamily = `${font}, DM Sans, system-ui, sans-serif`;
+            document.body.style.fontSize = size + 'px';
+
+            document.documentElement.style.setProperty('--c-bg', bg);
+            document.documentElement.style.setProperty('--c-surface', surface);
+            document.documentElement.style.setProperty('--c-text', text);
+            document.documentElement.style.setProperty('--c-primary', primary);
+            document.documentElement.style.setProperty('--c-accent', accent);
+
+            // Text content
+            const heroT = cfg.hero_title || defaultConfig.hero_title;
+            const heroS = cfg.hero_subtitle || defaultConfig.hero_subtitle;
+            const brand = cfg.company_name || defaultConfig.company_name;
+            const ctaQ = cfg.cta_quote || defaultConfig.cta_quote;
+            const ctaW = cfg.cta_wholesale || defaultConfig.cta_wholesale;
+
+            const el = (id) => document.getElementById(id);
+            if (el('heroTitle')) el('heroTitle').innerHTML = heroT.replace('Peru', '<span class="text-terra-400">Peru</span>');
+            if (el('heroSub')) el('heroSub').textContent = heroS;
+            if (el('headerBrand')) el('headerBrand').textContent = brand;
+            if (el('mobBrand')) el('mobBrand').textContent = brand;
+            if (el('footerBrand')) el('footerBrand').textContent = `© 2025 ${brand} Export. All rights reserved.`;
+            if (el('ctaQuoteBtn')) el('ctaQuoteBtn').textContent = ctaQ;
+            if (el('ctaWholesaleBtn')) el('ctaWholesaleBtn').textContent = ctaW;
+
+            // Apply heading fonts
+            document.querySelectorAll('.font-display').forEach(e => {
+                e.style.fontFamily = `Playfair Display, ${font}, Georgia, serif`;
+            });
+
+            // Scale text
+            document.querySelectorAll('h1').forEach(e => e.style.fontSize = (size * 2) + 'px');
+            document.querySelectorAll('h2').forEach(e => e.style.fontSize = (size * 1.5) + 'px');
+            document.querySelectorAll('h3').forEach(e => e.style.fontSize = (size * 1.2) + 'px');
+            document.querySelectorAll('p, span, a, td, th, label, option').forEach(e => {
+                if (!e.closest('h1') && !e.closest('h2') && !e.closest('h3')) {
+                    // Don't override explicit small sizes
+                }
+            });
+        }
+
+        if (window.elementSdk) {
+            window.elementSdk.init({
+                defaultConfig,
+                onConfigChange: async (config) => { applyConfig(config); },
+                mapToCapabilities: (config) => ({
+                    recolorables: [
+                        { get: () => config.background_color || defaultConfig.background_color, set: (v) => { config.background_color = v; window.elementSdk.setConfig({ background_color: v }); } },
+                        { get: () => config.surface_color || defaultConfig.surface_color, set: (v) => { config.surface_color = v; window.elementSdk.setConfig({ surface_color: v }); } },
+                        { get: () => config.text_color || defaultConfig.text_color, set: (v) => { config.text_color = v; window.elementSdk.setConfig({ text_color: v }); } },
+                        { get: () => config.primary_color || defaultConfig.primary_color, set: (v) => { config.primary_color = v; window.elementSdk.setConfig({ primary_color: v }); } },
+                        { get: () => config.accent_color || defaultConfig.accent_color, set: (v) => { config.accent_color = v; window.elementSdk.setConfig({ accent_color: v }); } },
+                    ],
+                    borderables: [],
+                    fontEditable: { get: () => config.font_family || defaultConfig.font_family, set: (v) => { config.font_family = v; window.elementSdk.setConfig({ font_family: v }); } },
+                    fontSizeable: { get: () => config.font_size || defaultConfig.font_size, set: (v) => { config.font_size = v; window.elementSdk.setConfig({ font_size: v }); } },
+                }),
+                mapToEditPanelValues: (config) => new Map([
+                    ['hero_title', config.hero_title || defaultConfig.hero_title],
+                    ['hero_subtitle', config.hero_subtitle || defaultConfig.hero_subtitle],
+                    ['company_name', config.company_name || defaultConfig.company_name],
+                    ['cta_quote', config.cta_quote || defaultConfig.cta_quote],
+                    ['cta_wholesale', config.cta_wholesale || defaultConfig.cta_wholesale],
+                ])
+            });
+        }
+
+        // Init
+        lucide.createIcons();
+    </script>
+    <script>(function () { function c() { var b = a.contentDocument || a.contentWindow.document; if (b) { var d = b.createElement('script'); d.innerHTML = "window.__CF$cv$params={r:'9eb861bf71fc6dfd',t:'MTc3NjA2MTQwNC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);"; b.getElementsByTagName('head')[0].appendChild(d) } } if (document.body) { var a = document.createElement('iframe'); a.height = 1; a.width = 1; a.style.position = 'absolute'; a.style.top = 0; a.style.left = 0; a.style.border = 'none'; a.style.visibility = 'hidden'; document.body.appendChild(a); if ('loading' !== document.readyState) c(); else if (window.addEventListener) document.addEventListener('DOMContentLoaded', c); else { var e = document.onreadystatechange || function () { }; document.onreadystatechange = function (b) { e(b); 'loading' !== document.readyState && (document.onreadystatechange = e, c()) } } } })();</script>
+</body>
+
+</html>

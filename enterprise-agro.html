@@ -2631,69 +2631,42 @@
         <div class="main-content">
 
             <!-- TOP HEADER -->
-            <header class="top-header">
-                <button class="header-burger" onclick="toggleSidebar()" aria-label="Menú">
-                    <svg width="18" height="18" viewBox="0 0 18 18" fill="currentColor">
-                        <path d="M1 3h16M1 9h16M1 15h16" stroke="currentColor" stroke-width="2"
-                            stroke-linecap="round" />
-                    </svg>
-                </button>
-                <div class="header-title-area">
-                    <div class="header-page-title" id="pageTitle">Dashboard General</div>
-                    <div class="header-breadcrumb" id="pageBreadcrumb">AgroExport Pro / Inicio</div>
-                </div>
-                <div class="header-actions" style="position:relative;">
-                    <button class="header-btn" onclick="toggleNotif()" id="notifBtn" aria-label="Notificaciones">
-                        🔔
-                        <span class="dot"></span>
-                    </button>
-                    <div class="notif-panel" id="notifPanel">
-                        <div class="notif-header">
-                            Notificaciones
-                            <button class="btn btn-xs btn-ghost">Marcar todas</button>
-                        </div>
-                        <div class="notif-list">
-                            <div class="notif-item unread">
-                                <div class="notif-dot red"></div>
-                                <div>
-                                    <div class="notif-text-title">⚠ Documento vencido</div>
-                                    <div class="notif-text-desc">Certificado fitosanitario CONT-008 expira en 2 días
-                                    </div>
-                                    <div class="notif-time">hace 12 min</div>
-                                </div>
-                            </div>
-                            <div class="notif-item unread">
-                                <div class="notif-dot gold"></div>
-                                <div>
-                                    <div class="notif-text-title">💳 Crédito pendiente</div>
-                                    <div class="notif-text-desc">Coop. Valle Verde — S/.18,400 vence en 5 días</div>
-                                    <div class="notif-time">hace 1 h</div>
-                                </div>
-                            </div>
-                            <div class="notif-item unread">
-                                <div class="notif-dot green"></div>
-                                <div>
-                                    <div class="notif-text-title">✅ Contenedor embarcado</div>
-                                    <div class="notif-text-desc">CONT-005 salió del Puerto del Callao → Rotterdam</div>
-                                    <div class="notif-time">hace 3 h</div>
-                                </div>
-                            </div>
-                            <div class="notif-item">
-                                <div class="notif-dot blue"></div>
-                                <div>
-                                    <div class="notif-text-title">📦 Nueva recepción registrada</div>
-                                    <div class="notif-text-desc">Fundo Los Álamos — 4.2 TM Palta Hass</div>
-                                    <div class="notif-time">hace 5 h</div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <button class="header-btn" onclick="openModal('nuevaRecepcionModal')" aria-label="Nueva recepción"
-                        style="background:linear-gradient(135deg,var(--green-700),var(--green-600));border-color:var(--green-500);color:#fff;width:auto;padding:0 14px;gap:6px;font-size:12px;font-weight:600;">
-                        + Registrar
-                    </button>
-                </div>
-            </header>
+                <!-- TOP HEADER -->
+    <div class="top-bar">
+        <div class="top-bar-inner">
+            <div class="top-bar-left">
+                <div class="icon-circle">📞</div>
+                <p>(051) 496 6384<br>RPM: #976-765606 / RPC: 980-967317</p>
+            </div>
+            
+            <div class="logo-center">
+                <svg width="180" height="90" viewBox="0 0 180 90" xmlns="http://www.w3.org/2000/svg">
+                    <circle cx="90" cy="45" r="35" fill="none" stroke="#FDCB29" stroke-width="8" stroke-dasharray="10 5" />
+                    <text x="90" y="52" font-family="Arial" font-weight="bold" font-size="28" fill="#5AA436" text-anchor="middle">Andina</text>
+                    <text x="90" y="65" font-family="Arial" font-size="10" fill="#206229" text-anchor="middle">Corporation Of Consultants</text>
+                </svg>
+            </div>
+
+            <div class="top-bar-right">
+                <div class="icon-circle">📍</div>
+                <p>Psj. Olaya 110 Ofc. 601<br>Plaza Mayor Cercado de Lima - Lima</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- NAV BAR AMARILLA -->
+    <nav class="nav-bar">
+        <ul class="nav-menu">
+            <li><a href="index.html">INICIO</a></li>
+            <li><a href="nosotros.html">EMPRESA</a></li>
+            <li><a href="servicios.html">SERVICIO ⌄</a></li>
+            <li><a href="productos.html">PRODUCTOS</a></li>
+            <li><a href="proyectos.html">PROYECTOS</a></li>
+            <li><a href="contacto.html">CONTACTO</a></li>
+            <li><a href="andinacorp-ecommerce.html">ECOMMERCE</a></li>
+            <li><a href="#" style="padding: 15px 15px;">🔍</a></li>
+        </ul>
+    </nav>
 
             <!-- PAGE AREA -->
             <div class="page-area">
